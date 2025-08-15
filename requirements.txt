@@ -1,0 +1,9 @@
+nltk==3.8.1
+pandas==2.1.4
+matplotlib==3.8.2
+jupyter==1.0.0
+notebook==7.0.6
+numpy==1.26.2
+yfinance==0.2.36
+textblob==0.17.1
+seaborn==0.13.1

@@ -7,3 +7,6 @@ numpy==1.26.2
 yfinance==0.2.36
 textblob==0.17.1
 seaborn==0.13.1
+vaderSentiment==3.3.2
+scipy==1.11.4
+talib-binary==0.4.19

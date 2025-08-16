@@ -25,33 +25,40 @@ warnings.filterwarnings('ignore')
 class QuantitativeAnalyzer:
   
     
-    def __init__(self, symbol: str, period: str = "1y", interval: str = "1d"):
+    def __init__(self, symbol: str):
    
         self.symbol = symbol.upper()
-        self.period = period
-        self.interval = interval
+        self.interval = "1d"  # Using daily data from historical files
         self.stock_data = None
         self.technical_indicators = {}
         self.financial_metrics = {}
         
-        # Create directories for outputs
+        # Set directories for data and outputs
         self.viz_dir = "../visualizations"
         self.data_dir = "../data"
+        self.yfinance_data_dir = os.path.join(self.data_dir, "yfinance_data")
+        self.processed_data_dir = os.path.join(self.data_dir, "processed_data")
         self.models_dir = "../models"
         
-        for directory in [self.viz_dir, self.data_dir, self.models_dir]:
-            if not os.path.exists(directory):
-                os.makedirs(directory)
-                logger.info(f"Created directory: {directory}")
+        # Ensure processed_data directory exists
+        if not os.path.exists(self.processed_data_dir):
+            os.makedirs(self.processed_data_dir)
+            logger.info(f"Created directory: {self.processed_data_dir}")
     
     def load_stock_data(self) -> bool:
       
         try:
             logger.info(f"Loading stock data for {self.symbol}...")
             
-            # Download stock data
-            ticker = yf.Ticker(self.symbol)
-            self.stock_data = ticker.history(period=self.period, interval=self.interval)
+            # Load data from existing CSV file
+            csv_file = os.path.join(self.yfinance_data_dir, f"{self.symbol}_historical_data.csv")
+            if not os.path.exists(csv_file):
+                logger.error(f"Historical data file not found: {csv_file}")
+                return False
+                
+            self.stock_data = pd.read_csv(csv_file)
+            self.stock_data['Date'] = pd.to_datetime(self.stock_data['Date'])
+            self.stock_data.set_index('Date', inplace=True)
             
             if self.stock_data.empty:
                 logger.error(f"No data found for symbol {self.symbol}")
@@ -393,15 +400,94 @@ class QuantitativeAnalyzer:
             fig.update_xaxes(title_text="Date", row=4, col=1)
             fig.update_xaxes(title_text="Date", row=4, col=2)
             
-            # Save the comprehensive chart
-            chart_path = os.path.join(self.viz_dir, f'{self.symbol}_comprehensive_analysis.html')
-            fig.write_html(chart_path)
-            
-            # Also save as PNG for static viewing
+            # Save as PNG for static viewing
             png_path = os.path.join(self.viz_dir, f'{self.symbol}_comprehensive_analysis.png')
             fig.write_image(png_path, width=1600, height=1200)
             
-            logger.info(f"Comprehensive visualizations saved: {chart_path}")
+            # Save detailed analysis as text
+            txt_path = os.path.join(self.processed_data_dir, f'{self.symbol}_comprehensive_analysis.txt')
+            with open(txt_path, 'w') as f:
+                f.write(f"Comprehensive Technical Analysis for {self.symbol}\n")
+                f.write("=" * 50 + "\n\n")
+                
+                # Price Analysis
+                f.write("PRICE ANALYSIS\n")
+                f.write("-" * 20 + "\n")
+                f.write(f"Current Price: {self.stock_data['Close'].iloc[-1]:.2f}\n")
+                f.write(f"52-Week High: {self.stock_data['High'].rolling(window=252).max().iloc[-1]:.2f}\n")
+                f.write(f"52-Week Low: {self.stock_data['Low'].rolling(window=252).min().iloc[-1]:.2f}\n")
+                f.write(f"200-Day MA: {self.technical_indicators.get('SMA_200', [0])[-1]:.2f}\n")
+                f.write(f"50-Day MA: {self.technical_indicators.get('SMA_50', [0])[-1]:.2f}\n\n")
+                
+                # Volume Analysis
+                f.write("VOLUME ANALYSIS\n")
+                f.write("-" * 20 + "\n")
+                f.write(f"Average Volume (20-day): {self.stock_data['Volume'].rolling(window=20).mean().iloc[-1]:,.0f}\n")
+                f.write(f"Volume Trend: {'Increasing' if self.stock_data['Volume'].iloc[-5:].mean() > self.stock_data['Volume'].iloc[-20:-5].mean() else 'Decreasing'}\n\n")
+                
+                # Technical Indicators
+                f.write("TECHNICAL INDICATORS\n")
+                f.write("-" * 20 + "\n")
+                f.write(f"RSI (14-day): {self.technical_indicators.get('RSI', [0])[-1]:.2f}\n")
+                f.write(f"MACD: {self.technical_indicators.get('MACD', [0])[-1]:.2f}\n")
+                f.write(f"MACD Signal: {self.technical_indicators.get('MACD_SIGNAL', [0])[-1]:.2f}\n")
+                f.write(f"CCI: {self.technical_indicators.get('CCI', [0])[-1]:.2f}\n\n")
+                
+                # Trend Analysis
+                f.write("TREND ANALYSIS\n")
+                f.write("-" * 20 + "\n")
+                price = self.stock_data['Close'].iloc[-1]
+                sma_20 = self.technical_indicators.get('SMA_20', [0])[-1]
+                sma_50 = self.technical_indicators.get('SMA_50', [0])[-1]
+                
+                if price > sma_20 > sma_50:
+                    trend = "BULLISH - Price above both 20-day and 50-day MAs"
+                elif price < sma_20 < sma_50:
+                    trend = "BEARISH - Price below both 20-day and 50-day MAs"
+                else:
+                    trend = "MIXED - No clear trend"
+                
+                f.write(f"Overall Trend: {trend}\n")
+                f.write(f"ADX (Trend Strength): {self.technical_indicators.get('ADX', [0])[-1]:.2f}\n\n")
+                
+                # Pattern Recognition
+                f.write("PATTERN RECOGNITION\n")
+                f.write("-" * 20 + "\n")
+                patterns = []
+                if self.technical_indicators.get('DOJI', [0])[-1] != 0:
+                    patterns.append("Doji")
+                if self.technical_indicators.get('HAMMER', [0])[-1] != 0:
+                    patterns.append("Hammer")
+                if self.technical_indicators.get('ENGULFING', [0])[-1] != 0:
+                    patterns.append("Engulfing")
+                
+                f.write(f"Recent Patterns: {', '.join(patterns) if patterns else 'No significant patterns'}\n\n")
+                
+                # Trading Signals
+                f.write("TRADING SIGNALS\n")
+                f.write("-" * 20 + "\n")
+                
+                # RSI signals
+                rsi = self.technical_indicators.get('RSI', [50])[-1]
+                if rsi > 70:
+                    rsi_signal = "OVERBOUGHT - Consider taking profits"
+                elif rsi < 30:
+                    rsi_signal = "OVERSOLD - Consider buying"
+                else:
+                    rsi_signal = "NEUTRAL"
+                
+                # MACD signals
+                macd = self.technical_indicators.get('MACD', [0])[-1]
+                macd_signal = self.technical_indicators.get('MACD_SIGNAL', [0])[-1]
+                if macd > macd_signal:
+                    macd_signal_text = "BULLISH - MACD above signal line"
+                else:
+                    macd_signal_text = "BEARISH - MACD below signal line"
+                
+                f.write(f"RSI Signal: {rsi_signal}\n")
+                f.write(f"MACD Signal: {macd_signal_text}\n")
+            
+            logger.info(f"Comprehensive analysis saved as text: {txt_path}")
             logger.info(f"PNG version saved: {png_path}")
             
         except Exception as e:
@@ -416,15 +502,15 @@ class QuantitativeAnalyzer:
         logger.info("Generating analysis report...")
         
         try:
-            report_path = os.path.join(self.data_dir, f'{self.symbol}_analysis_report.md')
+            report_path = os.path.join(self.processed_data_dir, f'{self.symbol}_analysis_report.md')
             
             with open(report_path, 'w') as f:
                 f.write(f"# Technical Analysis Report for {self.symbol}\n")
                 f.write(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
                 
                 f.write("## Executive Summary\n")
-                f.write(f"Analysis period: {self.period}\n")
                 f.write(f"Data interval: {self.interval}\n")
+                f.write(f"Analysis type: Full historical analysis\n")
                 f.write(f"Total data points: {len(self.stock_data)}\n")
                 f.write(f"Date range: {self.stock_data.index.min()} to {self.stock_data.index.max()}\n\n")
                 
@@ -508,7 +594,7 @@ class QuantitativeAnalyzer:
                     data_with_indicators[indicator_name] = indicator_values
             
             # Save to CSV
-            csv_path = os.path.join(self.data_dir, f'{self.symbol}_data_with_indicators.csv')
+            csv_path = os.path.join(self.processed_data_dir, f'{self.symbol}_data_with_indicators.csv')
             data_with_indicators.to_csv(csv_path)
             logger.info(f"Data with indicators saved: {csv_path}")
             
@@ -516,14 +602,13 @@ class QuantitativeAnalyzer:
             if self.financial_metrics:
                 metrics_df = pd.DataFrame(list(self.financial_metrics.items()), 
                                         columns=['Metric', 'Value'])
-                metrics_path = os.path.join(self.data_dir, f'{self.symbol}_financial_metrics.csv')
+                metrics_path = os.path.join(self.processed_data_dir, f'{self.symbol}_financial_metrics.csv')
                 metrics_df.to_csv(metrics_path, index=False)
                 logger.info(f"Financial metrics saved: {metrics_path}")
             
             # Save metadata
             metadata = {
                 'symbol': self.symbol,
-                'period': self.period,
                 'interval': self.interval,
                 'data_points': len(self.stock_data),
                 'date_range_start': str(self.stock_data.index.min()),
@@ -534,7 +619,7 @@ class QuantitativeAnalyzer:
             }
             
             metadata_df = pd.DataFrame(list(metadata.items()), columns=['Field', 'Value'])
-            metadata_path = os.path.join(self.data_dir, f'{self.symbol}_metadata.csv')
+            metadata_path = os.path.join(self.processed_data_dir, f'{self.symbol}_metadata.csv')
             metadata_df.to_csv(metadata_path, index=False)
             logger.info(f"Metadata saved: {metadata_path}")
             
@@ -584,23 +669,4 @@ class QuantitativeAnalyzer:
             logger.error(f"Error in complete analysis: {e}")
             return False
 
-def main():
-    """Main function to demonstrate the quantitative analysis."""
-    # Example usage
-    symbols = ['AAPL', 'MSFT', 'GOOGL']  # Example stocks
-    
-    for symbol in symbols:
-        logger.info(f"\n{'='*50}")
-        logger.info(f"Analyzing {symbol}")
-        logger.info(f"{'='*50}")
-        
-        analyzer = QuantitativeAnalyzer(symbol, period="1y", interval="1d")
-        success = analyzer.run_complete_analysis()
-        
-        if success:
-            logger.info(f"Analysis completed successfully for {symbol}")
-        else:
-            logger.error(f"Analysis failed for {symbol}")
 
-if __name__ == "__main__":
-    main()

@@ -1,234 +1,144 @@
-# Integrated Sentiment-Price Analysis for Stock Market Prediction
+# 📊 Financial News Sentiment & Stock Price Analysis
 
-## Project Overview
+## 🎯 Project Overview
 
-This project implements a comprehensive analysis system that combines **sentiment analysis of financial news** with **quantitative analysis of stock price data** to identify correlations and potential trading opportunities. The system addresses the feedback from the previous submission by providing:
+Nova Financial Solutions aims to enhance its predictive analytics capabilities to significantly boost financial forecasting accuracy and operational efficiency through advanced data analysis. This project focuses on analyzing the relationship between financial news sentiment and stock price movements to develop predictive investment strategies.
 
-- ✅ **Complete sentiment analysis implementation** using VADER and TextBlob
-- ✅ **Explicit correlation analysis** between news sentiment and stock price movements
-- ✅ **Integrated analysis workflow** combining both sentiment and quantitative components
-- ✅ **Modular code structure** with clear separation of concerns
-- ✅ **Comprehensive data handling** for both news and stock data
+## 🚀 Project Objectives
 
-## Key Features
+This comprehensive analysis project has two primary objectives:
 
-### 🔍 Sentiment Analysis
-- **VADER Sentiment Analysis**: Financial domain-optimized sentiment scoring
-- **TextBlob Analysis**: Alternative sentiment analysis with subjectivity scoring
-- **Sentiment Trend Analysis**: Daily sentiment patterns and trends
-- **Publisher Analysis**: Sentiment patterns by news source
-- **Keyword Analysis**: Sentiment around specific financial terms
+### 1. **Sentiment Analysis**
+- Perform sentiment analysis on financial news headlines using NLP techniques
+- Quantify tone and sentiment expressed in financial news
+- Associate sentiment scores with respective stock symbols
+- Understand emotional context surrounding stock-related news
 
-### 📊 Quantitative Analysis
-- **Technical Indicators**: SMA, RSI, MACD, Bollinger Bands
-- **Financial Metrics**: Returns, volatility, Sharpe ratio, drawdown
-- **Volume Analysis**: Price-volume relationships and patterns
-- **Trading Signals**: Technical indicator-based buy/sell signals
+### 2. **Correlation Analysis**
+- Establish statistical correlations between news sentiment and stock price movements
+- Track stock price changes around article publication dates
+- Analyze the impact of news sentiment on stock performance
+- Develop predictive models for investment strategies
 
-### 🔗 Integrated Analysis
-- **Sentiment-Price Correlation**: Direct correlation between news sentiment and stock returns
-- **Leading Indicators**: Sentiment as predictor of future price movements
-- **Volume-Sentiment Relationships**: Analysis of trading volume and sentiment interactions
-- **Trading Signals**: Sentiment-based trading recommendations
-- **Comprehensive Reporting**: Integrated analysis summaries
+## 📈 Dataset Overview
 
-## Project Structure
+**FNSPID (Financial News and Stock Price Integration Dataset)** - A comprehensive financial dataset combining quantitative and qualitative data for enhanced stock market predictions.
+
+### Dataset Structure:
+- **headline**: Article release headline with key financial actions
+- **url**: Direct link to the full news article
+- **publisher**: Author/creator of the article
+- **date**: Publication date and time (UTC-4 timezone)
+- **stock**: Stock ticker symbol (e.g., AAPL for Apple)
+
+## 🏗️ Project Structure
 
 ```
 Predict-Price-Movies-/
-├── src/
-│   ├── data_loader.py           # Data loading and preprocessing
-│   ├── sentiment_Anaalysis.py   # Sentiment analysis and integration
-│   ├── quanitative_Analysis.py  # Technical and financial analysis
-│   ├── main_analysis.py         # Main execution workflow
-│   └── _init_.py
-├── data/                        # Data storage directory
-├── tests/                       # Test files
-├── notbooks/                    # Jupyter notebooks
-├── requirements.txt             # Python dependencies
-└── README.md                   # This file
+├── data/                           # Raw and processed datasets
+├── src/                           # Source code modules
+│   ├── __init__.py               # Package initialization
+│   ├── correlation.py            # Correlation analysis module
+│   ├── eda_analysis.py          # Exploratory Data Analysis
+│   ├── quantitative_analysis.py # Technical indicators & metrics
+│   └── streamlit_dashboard.py   # Interactive dashboard
+├── notebooks/                     # Jupyter notebooks
+│   ├── correlation.ipynb         # Correlation analysis notebook
+│   ├── eda.ipynb                # EDA analysis notebook
+│   └── quantitative_analysis.ipynb # Quantitative analysis notebook
+├── visualizations/               # Generated charts and plots
+│   ├── AAPL_comprehensive_analysis.png
+│   ├── GOOGL_comprehensive_analysis.png
+│   ├── MSFT_comprehensive_analysis.png
+│   ├── monthly_trends.png
+│   ├── news_eda_visualizations.png
+│   └── top_publishers.png
+├── tests/                        # Unit tests
+│   └── __init__.py              # Test package initialization
+├── venv/                         # Virtual environment
+├── requirements.txt              # Python dependencies
+└── README.md                     # Project documentation
 ```
 
-## Installation
+## 📊 Key Features
 
-1. **Clone the repository**:
-   ```bash
-   git clone <repository-url>
-   cd Predict-Price-Movies-
-   ```
+### 📈 **Technical Analysis**
+- **Moving Averages**: SMA, EMA, WMA calculations
+- **Momentum Indicators**: RSI, MACD, Stochastic Oscillators
+- **Volatility Measures**: Bollinger Bands, ATR
+- **Volume Analysis**: Volume indicators and patterns
 
-2. **Create virtual environment**:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+### 🤖 **Sentiment Analysis**
+- Natural Language Processing on financial headlines
+- VADER sentiment scoring
+- TextBlob polarity analysis
+- Publisher sentiment tracking
 
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 📊 **Interactive Dashboard**
+- Real-time stock data visualization
+- Technical indicator overlays
+- Sentiment correlation analysis
+- Multi-timeframe analysis
+- Customizable chart parameters
 
-4. **Download NLTK data** (first run only):
-   ```python
-   import nltk
-   nltk.download('punkt')
-   nltk.download('stopwords')
-   nltk.download('wordnet')
-   nltk.download('vader_lexicon')
-   ```
+### 📈 **Quantitative Metrics**
+- Daily returns calculation
+- Volatility analysis
+- Risk-adjusted returns
+- Correlation matrices
+- Statistical significance testing
 
-## Usage
+## 📋 Analysis 
 
-### Quick Demo
-Run a simplified analysis to verify everything works:
-```bash
-python src/main_analysis.py --demo
-```
+### **Exploratory Data Analysis**
+- [x] Descriptive statistics for textual lengths
+- [x] Article count per publisher analysis
+- [x] Publication date trend analysis
+- [x] NLP topic modeling and keyword extraction
+- [x] Time series analysis of publication frequency
+- [x] Publisher contribution analysis
 
-### Full Analysis
-Run the complete integrated analysis workflow:
-```bash
-python src/main_analysis.py
-```
+### **Quantitative Analysis**
+- [x] Stock price data integration
+- [x] Technical indicator calculations (TA-Lib)
+- [x] Financial metrics computation (PyNance)
+- [x] Data visualization and insights
+- [x] Correlation analysis between sentiment and price movements
 
-### Custom Analysis
-```python
-from src.data_loader import DataLoader
-from src.sentiment_Anaalysis import SentimentAnalysis, IntegratedAnalysis
-from src.quanitative_Analysis import QuanitativeAnalysis
+## 📊 Key Performance Indicators (KPIs)
 
-# Load data
-data_loader = DataLoader()
-stock_data = data_loader.load_stock_data("AAPL", "2023-01-01", "2023-12-31")
-news_data = data_loader.create_sample_news_data("AAPL", "2023-01-01", "2023-12-31")
+- **Data Coverage**: Analysis of 5+ major stock symbols
+- **Technical Indicators**: 15+ calculated indicators per stock
+- **Sentiment Accuracy**: >85% sentiment classification accuracy
+- **Correlation Strength**: Measured correlation coefficients between sentiment and returns
+- **Visualization Quality**: Interactive plots with multiple timeframes
 
-# Perform analysis
-sentiment_analyzer = SentimentAnalysis(news_data, "AAPL")
-news_with_sentiment = sentiment_analyzer.calculate_sentiment_scores()
+## 🔬 Methodologies
 
-quant_analyzer = QuanitativeAnalysis(stock_data, "AAPL")
-stock_with_indicators = quant_analyzer.calculate_technical_indicators()
+### **Sentiment Analysis Pipeline**
+1. Text preprocessing and cleaning
+2. VADER sentiment scoring
+3. TextBlob polarity analysis
+4. Aggregation by stock symbol and time period
+5. Statistical validation
 
-integrated_analyzer = IntegratedAnalysis(news_with_sentiment, stock_with_indicators, "AAPL")
-integrated_data = integrated_analyzer.prepare_data()
+### **Technical Analysis Framework**
+1. Data acquisition via yfinance API
+2. Technical indicator calculation using TA-Lib
+3. Financial metrics computation
+4. Visualization with Plotly/Matplotlib
+5. Performance backtesting
 
-# Analyze correlations
-integrated_analyzer.analyze_sentiment_price_correlation()
-```
 
-## Data Requirements
 
-### Stock Data
-- **Format**: OHLCV (Open, High, Low, Close, Volume) data
-- **Source**: Automatically downloaded via yfinance
-- **Frequency**: Daily data recommended
-- **Required Columns**: `date`, `Open`, `High`, `Low`, `Close`, `Volume`
 
-### News Data
-- **Format**: CSV with financial news articles
-- **Required Columns**: `date`, `headline`, `publisher`
-- **Content**: Financial news headlines about the stock
-- **Source**: Can be real data or generated sample data
+## 🔗 References
 
-## Analysis Workflow
-
-1. **Data Loading**: Load stock and news data
-2. **Data Validation**: Ensure compatibility and quality
-3. **Sentiment Analysis**: Calculate sentiment scores for news articles
-4. **Quantitative Analysis**: Calculate technical indicators and financial metrics
-5. **Data Integration**: Align sentiment and stock data by date
-6. **Correlation Analysis**: Analyze relationships between sentiment and price movements
-7. **Leading Indicator Analysis**: Test sentiment as predictor of future returns
-8. **Trading Signal Generation**: Create sentiment-based trading recommendations
-9. **Reporting**: Generate comprehensive analysis summaries
-
-## Key Outputs
-
-### Visualizations
-- Sentiment distribution and trends
-- Technical indicator charts
-- Correlation heatmaps
-- Sentiment-price relationship plots
-- Trading signal charts
-
-### Metrics
-- Sentiment statistics (VADER, TextBlob)
-- Technical indicator values
-- Financial performance metrics
-- Correlation coefficients
-- Trading signal performance
-
-### Data Files
-- Processed stock data with indicators
-- News data with sentiment scores
-- Integrated datasets for further analysis
-
-## Technical Details
-
-### Sentiment Analysis Methods
-- **VADER**: Valence Aware Dictionary and sEntiment Reasoner
-  - Optimized for social media and financial text
-  - Provides compound, positive, negative, and neutral scores
-- **TextBlob**: General-purpose sentiment analysis
-  - Polarity (-1 to 1) and subjectivity (0 to 1) scores
-  - Good for comparative analysis
-
-### Technical Indicators
-- **Moving Averages**: 20, 50, and 200-day SMAs
-- **RSI**: Relative Strength Index (14-period)
-- **MACD**: Moving Average Convergence Divergence
-- **Financial Metrics**: Returns, volatility, Sharpe ratio, drawdown
-
-### Integration Methods
-- **Date Alignment**: Resample sentiment data to daily frequency
-- **Correlation Analysis**: Pearson correlation between sentiment and returns
-- **Lagged Analysis**: Test sentiment as leading indicator
-- **Volume Integration**: Combine sentiment with trading volume analysis
-
-## Performance Considerations
-
-- **Data Size**: Handles datasets with thousands of articles and price points
-- **Processing Time**: Sentiment analysis scales linearly with article count
-- **Memory Usage**: Efficient pandas operations for large datasets
-- **Caching**: Processed data can be saved and reloaded
-
-## Troubleshooting
-
-### Common Issues
-1. **NLTK Data Missing**: Run the NLTK download commands
-2. **TA-Lib Installation**: Use `talib-binary` for easier installation
-3. **Data Compatibility**: Ensure date ranges overlap between datasets
-4. **Memory Issues**: Process smaller date ranges for very large datasets
-
-### Error Messages
-- Check data column names match requirements
-- Verify date formats are consistent
-- Ensure sufficient data overlap for correlation analysis
-
-## Future Enhancements
-
-- **Real-time Data**: Integration with live news feeds
-- **Machine Learning**: Sentiment-based prediction models
-- **Multi-asset Analysis**: Portfolio-level sentiment analysis
-- **API Integration**: Real-time stock data and news APIs
-- **Web Interface**: Interactive dashboard for analysis
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## License
-
-This project is for educational and research purposes. Please ensure compliance with data usage terms and regulations.
-
-## Contact
-
-For questions or issues, please open an issue in the repository or contact the development team.
+- [TA-Lib Documentation](https://ta-lib.org/)
+- [yfinance API](https://pypi.org/project/yfinance/)
+- [VADER Sentiment](https://github.com/cjhutto/vaderSentiment)
+- [Streamlit Documentation](https://docs.streamlit.io/)
+- [Plotly Python](https://plotly.com/python/)
 
 ---
 
-**Note**: This project demonstrates the integration of sentiment analysis with quantitative financial analysis. Results should not be considered as financial advice. Always conduct thorough research before making investment decisions.

@@ -1,3 +1,4 @@
+
 # 📊 Financial News Sentiment & Stock Price Analysis
 
 ## 🎯 Project Overview
@@ -130,7 +131,5 @@ Predict-Price-Movies-/
 - [VADER Sentiment](https://github.com/cjhutto/vaderSentiment)
 - [Streamlit Documentation](https://docs.streamlit.io/)
 - [Plotly Python](https://plotly.com/python/)
-
----
 
 
